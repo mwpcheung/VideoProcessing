@@ -1,10 +1,12 @@
 // mwpcheung@gmail.com
-
+#pragma once
 #import <CoreFoundation/CoreFoundation.h>
 #import <CoreMedia/CoreMedia.h>
+#import <VideoToolBox/VideoToolBox.h>
 
-// VCPCompressionSessionRef and VTCompressionSessionRef are different types
+
 typedef CFTypeRef VCPCompressionSessionRef;
+typedef CFTypeRef VCPDecompressionSessionRef;
 
 OSStatus VCPCompressionSessionCreate(CFAllocatorRef allocator, int32_t width, int32_t height,
     CMVideoCodecType codecType, 
@@ -30,6 +32,26 @@ OSStatus VCPCompressionSessionEncodeFrame(VCPCompressionSessionRef session,
     CVImageBufferRef imageBuffer,
     CMTime presentationTimeStamp,
     CMTime duration, // may be kCMTimeInvalid
-    CM_NULLABLE CFDictionaryRef frameProperties,
-    void * CM_NULLABLE sourceFrameRefcon,
+     CFDictionaryRef  frameProperties,
+    void*  sourceFrameRefcon,
     VTEncodeInfoFlags* infoFlagsOut);
+
+
+
+OSStatus  VCPDecompressionSessionDecodeFrame(VCPDecompressionSessionRef sesson, CMSampleBufferRef  sample, VTDecodeFrameFlags decodeFlags, void*  sourceFrameRefCon, VTDecodeInfoFlags*  infoFlagsout);
+
+
+void VCPDecompressionSessionInvalidate(VCPDecompressionSessionRef session);
+
+
+OSStatus VCPDecompressionSessionCopyProperty(VCPDecompressionSessionRef session,  CFTypeRef  key,  void*  unk,  CFTypeRef *  value);
+
+
+OSStatus VCPDecompressionSessionSetProperty(VCPDecompressionSessionRef session, CFStringRef key, CFTypeRef value);
+
+OSStatus VCPDecompressionSessionCreate(CM_NULLABLE CFAllocatorRef allocator,
+                                       CM_NONNULL CMVideoFormatDescriptionRef videoFormatDescription,
+                                       CM_NULLABLE CFDictionaryRef videoDecoderSpecification,
+                                       CM_NULLABLE CFDictionaryRef destinationImageBufferAttributes,
+                                       const VTDecompressionOutputCallbackRecord* CM_NULLABLE outputCallback,
+                                       VCPDecompressionSessionRef* decompressionSessionOut);
